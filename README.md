@@ -33,8 +33,8 @@ L'objectif du projet est de fournir davantage de contexte compétitif pendant un
 
 <div align="center">
 
-![Image de l'overlay in game](assets/RLOoverlay.png)
-![Image du panel de contrôle](assets/RLOdashboard.png)
+<img width="300" height="300" alt="RLOdashboard" src="assets/RLOoverlay.png" />
+<img width="300" height="300" alt="RLOdashboard" src="assets/RLOdashboard.png" />
 
 </div>
 
