@@ -1,6 +1,18 @@
+<div align="center">
+
 # RL Overlay (RLO)
 
 Un overlay Rocket League permettant d'afficher en temps réel des informations avancées sur les joueurs et la partie en cours.
+
+  <img src="https://img.shields.io/badge/Rocket%20League-000000?logo=rocketleague&logoColor=white" alt="Rocket League" />
+<img src="https://img.shields.io/badge/Electron-47848F?logo=electron&logoColor=white" alt="Electron" />
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black" alt="JS" />
+<img src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white" alt="Git" />
+<img src="https://img.shields.io/badge/API-009688?logo=api&logoColor=white" alt="API" />
+
+</div>
+
+---
 
 RLO récupère les données fournies par Rocket League via RLS et affiche directement en jeu des informations qui ne sont normalement pas visibles :
 
@@ -19,7 +31,12 @@ L'objectif du projet est de fournir davantage de contexte compétitif pendant un
 
 ## Aperçu
 
-*Ajouter ici des captures d'écran de l'overlay et du dashboard.*
+<div align="center">
+
+![Image de l'overlay in game](assets/RLOoverlay.png)
+![Image du panel de contrôle](assets/RLOdashboard.png)
+
+</div>
 
 ---
 
@@ -54,7 +71,7 @@ L'objectif du projet est de fournir davantage de contexte compétitif pendant un
 - Touche `1`
 - Combinaison manette `LB + R3`
 
-Permettent de changer rapidement le mode sélectionné.
+Permettent de changer rapidement le format sélectionné.
 
 ---
 
@@ -74,7 +91,7 @@ Avant d'utiliser RLO, vous devez disposer de :
 Cloner le dépôt :
 
 ```bash
-git clone https://github.com/VOTRE_PSEUDO/RL-Overlay.git
+git clone https://github.com/0ri0546/RL-Overlay.git
 cd RL-Overlay
 ```
 
@@ -95,6 +112,8 @@ Lancer l'application :
 ```bash
 npm start
 ```
+
+Ou télécharger le .exe directement en Release.
 
 ---
 
