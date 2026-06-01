@@ -33,8 +33,8 @@ L'objectif du projet est de fournir davantage de contexte compétitif pendant un
 
 <div align="center">
 
-<img width="300" height="300" alt="RLOdashboard" src="assets/RLOoverlay.png" />
-<img width="300" height="300" alt="RLOdashboard" src="assets/RLOdashboard.png" />
+<img width="400" height="400" alt="RLOdashboard" src="assets/RLOoverlay.png" />
+<img width="400" height="400" alt="RLOdashboard" src="assets/RLOdashboard.png" />
 
 </div>
 
