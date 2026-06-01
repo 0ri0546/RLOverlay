@@ -1,0 +1,46 @@
+{
+  "name": "rl-overlay",
+  "version": "1.0.0",
+  "description": "Rocket League MMR Overlay",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --publish never",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.rloverlay.app",
+    "productName": "RL Overlay",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "portable",
+      "icon": "assets/icon.ico"
+    },
+    "portable": {
+      "artifactName": "RL-Overlay.exe"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "src/xinput.ps1",
+        "to": "xinput.ps1"
+      }
+    ]
+  },
+  "dependencies": {
+    "axios": "^1.16.1",
+    "dotenv": "^17.4.2",
+    "uiohook-napi": "^1.5.5",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3"
+  }
+}

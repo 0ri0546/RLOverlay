@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    :root {
+      --bg: #070a0f;
+      --bg2: #0c1018;
+      --bg3: #111620;
+      --border: rgba(0, 255, 200, 0.08);
+      --border2: rgba(0, 255, 200, 0.15);
+      --cyan: #00ffc8;
+      --cyan-dim: rgba(0, 255, 200, 0.15);
+      --cyan-glow: rgba(0, 255, 200, 0.35);
+      --orange: #ff7b1a;
+      --orange-dim: rgba(255, 123, 26, 0.15);
+      --blue: #1a8fff;
+      --blue-dim: rgba(26, 143, 255, 0.15);
+      --text: #c8d8e8;
+      --text-dim: rgba(200, 216, 232, 0.35);
+      --text-muted: rgba(200, 216, 232, 0.18);
+      --green: #00e676;
+      --red: #ff3d5a;
+      --amber: #ffb300;
+      --win-bg: rgba(0, 230, 118, 0.08);
+      --loss-bg: rgba(255, 61, 90, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: transparent;
+      color: var(--text);
+      overflow: hidden;
+      user-select: none;
+      font-size: 13px;
+    }
+
+    #app::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.06) 2px,
+          rgba(0, 0, 0, 0.06) 4px);
+      pointer-events: none;
+      z-index: 100;
+      border-radius: 12px;
+    }
+
+    #app {
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(0, 255, 200, 0.04), inset 0 1px 0 rgba(0, 255, 200, 0.1);
+    }
+
+    #app::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0.6;
+    }
+
+    #header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      cursor: grab;
+      -webkit-app-region: drag;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      position: relative;
+    }
+
+    #header:active {
+      cursor: grabbing;
+    }
+
+    #dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red);
+      flex-shrink: 0;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    #dot.ok {
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan-glow);
+    }
+
+    #status-text {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      flex: 1;
+    }
+
+    .hbtn {
+      -webkit-app-region: no-drag;
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      transition: all 0.15s;
+      line-height: 1;
+    }
+
+    .hbtn:hover {
+      color: var(--cyan);
+      border-color: var(--border2);
+      background: var(--cyan-dim);
+    }
+
+    #settings-bar {
+      display: flex;
+      gap: 6px;
+      padding: 5px 10px;
+      border-bottom: 1px solid var(--border);
+      -webkit-app-region: no-drag;
+      background: var(--bg2);
+    }
+
+    #my-name-input {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 4px 8px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    #my-name-input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 1px var(--cyan-dim);
+    }
+
+    #my-name-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    #format-bar {
+      display: flex;
+      gap: 4px;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      -webkit-app-region: no-drag;
+      background: var(--bg2);
+    }
+
+    .fbtn {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 4px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+
+    .fbtn:hover {
+      background: var(--cyan-dim);
+      border-color: var(--border2);
+      color: var(--cyan);
+    }
+
+    .fbtn.active {
+      background: var(--cyan-dim);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan-dim);
+    }
+
+    #content {
+      flex: 1;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .team {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      position: relative;
+    }
+
+    .team-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .team-header.blue {
+      background: var(--blue-dim);
+      color: var(--blue);
+      border-left: 2px solid var(--blue);
+    }
+
+    .team-header.orange {
+      background: var(--orange-dim);
+      color: var(--orange);
+      border-left: 2px solid var(--orange);
+    }
+
+    .tdot {
+      display: none;
+    }
+
+    .tavg {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      font-size: 10px;
+      opacity: 0.5;
+    }
+
+    .prow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(0, 255, 200, 0.04);
+      transition: background 0.1s;
+      position: relative;
+    }
+
+    .prow:last-child {
+      border-bottom: none;
+    }
+
+    .prow:hover {
+      background: rgba(0, 255, 200, 0.03);
+    }
+
+    .pname {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text);
+    }
+
+    .pplatform {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      background: var(--bg3);
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+    }
+
+    .rank-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 4px rgba(0, 255, 200, 0.2));
+    }
+
+    .prank {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .pmmr {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      min-width: 48px;
+      text-align: right;
+      flex-shrink: 0;
+      color: var(--cyan);
+      letter-spacing: -0.02em;
+    }
+
+    .pmmr.loading {
+      min-width: 36px;
+      height: 12px;
+      background: var(--bg3);
+      border-radius: 3px;
+      animation: pulse 1.2s ease-in-out infinite;
+      font-size: 0;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    #win-chance {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #win-chance::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(0, 255, 200, 0.03) 50%, transparent 100%);
+    }
+
+    #empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    #empty::before {
+      content: '◈';
+      font-size: 24px;
+      color: var(--border2);
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="header">
+      <div id="dot"></div>
+      <span id="status-text">Connexion...</span>
+      <button class="hbtn" onclick="api.reconnect()" title="Reconnecter">↺</button>
+      <button class="hbtn" onclick="api.close()" title="Fermer">✕</button>
+    </div>
+    <div id="format-bar">
+      <button class="fbtn active" data-fmt="auto" onclick="setFormat('auto')">Auto</button>
+      <button class="fbtn" data-fmt="1v1" onclick="setFormat('1v1')">1v1</button>
+      <button class="fbtn" data-fmt="2v2" onclick="setFormat('2v2')">2v2</button>
+      <button class="fbtn" data-fmt="3v3" onclick="setFormat('3v3')">3v3</button>
+    </div>
+    <div id="settings-bar">
+      <input id="my-name-input" type="text" placeholder="Ton pseudo exact" />
+      <button class="hbtn" onclick="saveName()">✓</button>
+    </div>
+    <div id="content">
+      <div id="empty">Lance un match<br>pour voir les joueurs</div>
+    </div>
+  </div>
+
+  <script>
+    let myName = localStorage.getItem('myName') || ''
+
+    const input = document.getElementById('my-name-input')
+    if (input && myName) input.value = myName
+
+    function saveName() {
+      myName = document.getElementById('my-name-input').value.trim()
+      localStorage.setItem('myName', myName)
+    }
+
+    api.on('status', ({ ok, msg }) => {
+      document.getElementById('dot').className = ok ? 'ok' : ''
+      document.getElementById('status-text').textContent = msg
+    })
+
+    let lastPlayers = null
+
+    api.on('players', players => {
+      renderPlayers(players)
+    })
+
+    function playerRow(p) {
+      const rs = rankStyle(p.rank)
+      const iconHtml = activeModules.rank ? rankIcon(p.rank) : ''
+      const rankHtml = activeModules.rank && p.rank
+        ? `<span class="prank" style="background:${rs.bg};color:${rs.text}">${p.rank}</span>`
+        : ''
+      const mmrHtml = activeModules.mmr
+        ? (p.mmr !== null ? `<div class="pmmr">${p.mmr}</div>` : `<div class="pmmr loading">0</div>`)
+        : ''
+      const platformHtml = activeModules.platform
+        ? `<div class="pplatform">${p.platform}</div>`
+        : ''
+      const demoHtml = activeModules.demos
+        ? `<div class="pdemo" title="Demos">💥${p.demos ?? 0}</div>`
+        : ''
+
+      return `
+    <div class="prow">
+      <div class="pname">${esc(p.name)}</div>
+      ${platformHtml}
+      ${iconHtml}
+      ${rankHtml}
+      ${demoHtml}
+      ${mmrHtml}
+    </div>
+  `
+    }
+
+    function rankStyle(rankName) {
+      if (!rankName) return { bg: 'rgba(100,100,100,0.15)', text: '#888' }
+      const r = rankName.toLowerCase()
+      if (r.includes('supersonic')) return { bg: 'rgba(255,255,255,0.15)', text: '#ffffff' }
+      if (r.includes('grand champion')) return { bg: 'rgba(255,120,120,0.18)', text: '#ff8f8f' }
+      if (r.includes('champion')) return { bg: 'rgba(190,150,255,0.18)', text: '#c9a6ff' }
+      if (r.includes('diamond')) return { bg: 'rgba(70,110,255,0.18)', text: '#7fa4ff' }
+      if (r.includes('platinum')) return { bg: 'rgba(90,220,255,0.18)', text: '#79e6ff' }
+      if (r.includes('gold')) return { bg: 'rgba(255,200,60,0.18)', text: '#ffd24d' }
+      if (r.includes('silver')) return { bg: 'rgba(190,190,190,0.15)', text: '#d0d0d0' }
+      if (r.includes('bronze')) return { bg: 'rgba(150,95,55,0.18)', text: '#c58a5a' }
+      return { bg: 'rgba(100,100,100,0.15)', text: '#888' }
+    }
+
+    function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;') }
+
+    function setFormat(fmt) {
+      document.querySelectorAll('.fbtn').forEach(b => b.classList.toggle('active', b.dataset.fmt === fmt))
+      api.setFormat(fmt)
+    }
+
+    api.on('format', label => {
+      document.getElementById('status-text').textContent = label
+      document.querySelectorAll('.fbtn').forEach(b => b.classList.toggle('active', b.dataset.fmt === label))
+    })
+
+    let currentScore = { blue: 0, orange: 0, time: 300, overtime: false }
+
+    api.on('score', s => {
+      currentScore = s
+      if (lastPlayers) {
+        const chance = winChance(lastPlayers, currentScore)
+        updateWinChance(chance)
+        api.sendWinChance(chance)
+      }
+    })
+
+    const FORMATS = ['auto', '1v1', '2v2', '3v3']
+    let currentFormatIdx = 0
+
+    function rankIcon(rankName) {
+      if (!rankName) return ''
+      const map = {
+        'I': '1', 'II': '2', 'III': '3'
+      }
+      const parts = rankName.split(' ')
+      const division = map[parts[parts.length - 1]] || ''
+      const base = parts.slice(0, -1).join('').toLowerCase().replace(/ /g, '')
+      const file = base + division
+      return `<img src="assets/ranks/${file}.png" class="rank-icon" alt="${rankName}">`
+    }
+
+    function winChance(players, score) {
+      const me = players.find(p => p.name === myName)
+      const myTeam = me ? me.team : 0
+      const myT = players.filter(p => p.team === myTeam && p.mmr)
+      const theirT = players.filter(p => p.team !== myTeam && p.mmr)
+      if (!myT.length || !theirT.length) return null
+
+      const avgMine = myT.reduce((s, p) => s + p.mmr, 0) / myT.length
+      const avgTheirs = theirT.reduce((s, p) => s + p.mmr, 0) / theirT.length
+
+      let chance = 1 / (1 + Math.pow(10, (avgTheirs - avgMine) / 400))
+
+      if (theirT.length < myT.length) {
+        const missing = myT.length - theirT.length
+        chance = Math.min(1, chance + missing * 0.15)
+      }
+
+      if (score) {
+        const myScore = myTeam === 0 ? score.blue : score.orange
+        const theirScore = myTeam === 0 ? score.orange : score.blue
+        const diff = myScore - theirScore
+        const timeLeft = score.overtime ? 0 : score.time
+        const totalTime = 300
+        const timePlayed = totalTime - timeLeft
+        const gameProgress = Math.min(timePlayed / totalTime, 1)
+
+        const scoreImpact = diff * 0.08 * (1 + gameProgress * 1.5)
+        chance = Math.max(0.02, Math.min(0.98, chance + scoreImpact))
+      }
+
+      return Math.round(chance * 100)
+    }
+
+    function updateWinChance(chance) {
+      const winEl = document.getElementById('win-chance')
+      if (!winEl || chance === null) return
+      const color = chance >= 60 ? 'var(--green)' : chance <= 40 ? 'var(--red)' : 'var(--amber)'
+      winEl.innerHTML = `<span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:${color}">${chance}%</span><span style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)">WIN ESTIMÉ</span>`
+    }
+
+    let activeModules = {
+      mmr: true, rank: true, winchance: true,
+      demos: true, platform: true, avg: true
+    }
+
+    function renderPlayers(players) {
+      lastPlayers = players
+      const content = document.getElementById('content')
+      if (!players || players.length === 0) {
+        content.innerHTML = '<div id="empty">Lance un match<br>pour voir les joueurs</div>'
+        return
+      }
+      content.innerHTML = ''
+      const teams = [0, 1].map(t => players.filter(p => p.team === t))
+      const labels = ['Equipe bleue', 'Equipe orange']
+      const sides = ['blue', 'orange']
+      teams.forEach((team, ti) => {
+        if (!team.length) return
+        const validMMRs = team.filter(p => p.mmr).map(p => p.mmr)
+        const avg = validMMRs.length ? Math.round(validMMRs.reduce((a, b) => a + b, 0) / validMMRs.length) : null
+        const block = document.createElement('div')
+        block.className = 'team'
+        block.innerHTML = `
+      <div class="team-header ${sides[ti]}">
+        <div class="tdot ${sides[ti]}"></div>
+        ${labels[ti]}
+        ${activeModules.avg && avg ? `<span class="tavg">moy. ${avg}</span>` : ''}
+      </div>
+      ${team.map(p => playerRow(p)).join('')}
+    `
+        content.appendChild(block)
+      })
+      if (activeModules.winchance) {
+        const winEl = document.createElement('div')
+        winEl.id = 'win-chance'
+        content.appendChild(winEl)
+        const chance = winChance(players, currentScore)
+        updateWinChance(chance)
+        api.sendWinChance(chance)
+      }
+    }
+
+    api.on('modules', mods => {
+      activeModules = mods
+      if (lastPlayers) renderPlayers(lastPlayers)
+    })
+
+    api.on('demos', data => {
+      console.log("DEMOS DATA:", data)
+      console.log("PLAYERS IDS:", lastPlayers.map(p => p.primaryId))
+      if (!lastPlayers) return
+
+      lastPlayers = lastPlayers.map(p => {
+        const id = p.primaryId || p.id || p.name
+        return {
+          ...p,
+          demos: data[id]?.count ?? 0
+        }
+      })
+
+      renderPlayers(lastPlayers)
+    })
+  </script>
+</body>
+
+</html>

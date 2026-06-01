@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    :root {
+      --bg: #070a0f;
+      --bg2: #0c1018;
+      --bg3: #111620;
+      --border: rgba(0, 255, 200, 0.08);
+      --border2: rgba(0, 255, 200, 0.15);
+      --cyan: #00ffc8;
+      --cyan-dim: rgba(0, 255, 200, 0.12);
+      --orange: #ff7b1a;
+      --blue: #1a8fff;
+      --text: #c8d8e8;
+      --text-dim: rgba(200, 216, 232, 0.4);
+      --text-muted: rgba(200, 216, 232, 0.18);
+      --green: #00e676;
+      --red: #ff3d5a;
+      --amber: #ffb300;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      user-select: none;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      flex-shrink: 0;
+    }
+
+    #dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red);
+      transition: all 0.3s;
+    }
+
+    #dot.ok {
+      background: var(--cyan);
+      box-shadow: 0 0 6px rgba(0, 255, 200, 0.5);
+    }
+
+    .logo {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+
+    #status-text {
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      flex: 1;
+    }
+
+    #format-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--amber);
+      background: rgba(255, 179, 0, 0.1);
+      border: 1px solid rgba(255, 179, 0, 0.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    #main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    #panel-modules {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    #panel-live {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .panel-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 14px 6px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      flex-shrink: 0;
+    }
+
+    .module-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .module-item:hover {
+      background: rgba(0, 255, 200, 0.03);
+    }
+
+    .module-item:last-child {
+      border-bottom: none;
+    }
+
+    .module-icon {
+      font-size: 14px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .module-info {
+      flex: 1;
+    }
+
+    .module-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+
+    .module-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .toggle {
+      width: 34px;
+      height: 18px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 99px;
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle.on {
+      background: var(--cyan-dim);
+      border-color: var(--cyan);
+    }
+
+    .toggle.on::after {
+      transform: translateX(16px);
+      background: var(--cyan);
+      box-shadow: 0 0 6px rgba(0, 255, 200, 0.5);
+    }
+
+    .live-section {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .live-section-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    #score-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
+    .score-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .score-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .score-label.blue {
+      color: var(--blue);
+    }
+
+    .score-label.orange {
+      color: var(--orange);
+    }
+
+    .score-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .score-val.blue {
+      color: var(--blue);
+    }
+
+    .score-val.orange {
+      color: var(--orange);
+    }
+
+    .score-sep {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      color: var(--text-muted);
+      margin-top: 14px;
+    }
+
+    #time-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+
+    #win-bar-wrap {
+      margin-top: 8px;
+    }
+
+    .win-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .win-bar-bg {
+      height: 6px;
+      background: var(--bg3);
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    #win-bar-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 99px;
+      transition: width 0.5s ease, background 0.3s;
+    }
+
+    #demo-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .demo-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .demo-row:last-child {
+      border-bottom: none;
+    }
+
+    .demo-name {
+      flex: 1;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .demo-team-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .demo-team-dot.blue {
+      background: var(--blue);
+    }
+
+    .demo-team-dot.orange {
+      background: var(--orange);
+    }
+
+    .demo-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan);
+      min-width: 20px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .demo-btn {
+      background: none;
+      border: 1px solid var(--border2);
+      color: var(--text-muted);
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.1s;
+      flex-shrink: 0;
+    }
+
+    .demo-btn:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .reset-btn {
+      width: 100%;
+      background: rgba(255, 61, 90, 0.08);
+      border: 1px solid rgba(255, 61, 90, 0.2);
+      color: var(--red);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 8px;
+    }
+
+    .reset-btn:hover {
+      background: rgba(255, 61, 90, 0.15);
+    }
+
+    .empty-live {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header">
+    <div id="dot"></div>
+    <span class="logo">RL Board</span>
+    <span id="status-text">En attente...</span>
+    <span id="format-label" style="display:none">—</span>
+  </div>
+
+  <div id="main">
+
+    <div id="panel-modules">
+      <div class="panel-title">Modules overlay</div>
+
+      <div class="module-item" onclick="toggleModule('mmr')">
+        <div class="module-icon">1</div>
+        <div class="module-info">
+          <div class="module-name">MMR</div>
+          <div class="module-desc">Points de classement</div>
+        </div>
+        <div class="toggle on" id="toggle-mmr"></div>
+      </div>
+
+      <div class="module-item" onclick="toggleModule('rank')">
+        <div class="module-icon">2</div>
+        <div class="module-info">
+          <div class="module-name">Rank & icône</div>
+          <div class="module-desc">Rang et badge visuel</div>
+        </div>
+        <div class="toggle on" id="toggle-rank"></div>
+      </div>
+
+      <div class="module-item" onclick="toggleModule('winchance')">
+        <div class="module-icon">3</div>
+        <div class="module-info">
+          <div class="module-name">Win% estimé</div>
+          <div class="module-desc">Probabilité de victoire</div>
+        </div>
+        <div class="toggle on" id="toggle-winchance"></div>
+      </div>
+
+      <div class="module-item" onclick="toggleModule('demos')">
+        <div class="module-icon">4</div>
+        <div class="module-info">
+          <div class="module-name">Demo counter</div>
+          <div class="module-desc">Démolitions par joueur</div>
+        </div>
+        <div class="toggle on" id="toggle-demos"></div>
+      </div>
+
+      <div class="module-item" onclick="toggleModule('platform')">
+        <div class="module-icon">5</div>
+        <div class="module-info">
+          <div class="module-name">Platform tag</div>
+          <div class="module-desc">Epic, PS4, Xbox...</div>
+        </div>
+        <div class="toggle on" id="toggle-platform"></div>
+      </div>
+
+      <div class="module-item" onclick="toggleModule('avg')">
+        <div class="module-icon">6</div>
+        <div class="module-info">
+          <div class="module-name">Moyenne équipe</div>
+          <div class="module-desc">MMR moyen affiché</div>
+        </div>
+        <div class="toggle on" id="toggle-avg"></div>
+      </div>
+    </div>
+
+    <div id="panel-live">
+      <div class="panel-title">En direct</div>
+
+      <div class="live-section" id="live-score-section" style="display:none">
+        <div class="live-section-title">Score</div>
+        <div id="score-display">
+          <div class="score-team">
+            <div class="score-label blue">Bleu</div>
+            <div class="score-val blue" id="score-blue">0</div>
+          </div>
+          <div class="score-sep">—</div>
+          <div class="score-team">
+            <div class="score-label orange">Orange</div>
+            <div class="score-val orange" id="score-orange">0</div>
+          </div>
+        </div>
+        <div id="time-display">5:00</div>
+
+        <div id="win-bar-wrap">
+          <div class="win-bar-labels">
+            <span id="win-label-mine" style="color:var(--green)">—%</span>
+            <span style="font-size:9px;color:var(--text-muted);font-weight:500">WIN ESTIMÉ</span>
+            <span id="win-label-their" style="color:var(--red)">—%</span>
+          </div>
+          <div class="win-bar-bg">
+            <div id="win-bar-fill" style="width:50%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="live-section" id="live-demo-section" style="display:none">
+        <div class="live-section-title">Démolitions</div>
+        <div id="demo-list"></div>
+        <button class="reset-btn" onclick="resetDemos()">↺ Reset demos</button>
+      </div>
+
+      <div class="empty-live" id="live-empty">Lance un match</div>
+    </div>
+
+  </div>
+
+  <script>
+    let playersCache = []
+    let demoData = {}
+
+    const modules = {
+      mmr: true, rank: true, winchance: true,
+      demos: true, platform: true, avg: true
+    }
+
+    Object.keys(modules).forEach(k => {
+      const saved = localStorage.getItem('module_' + k)
+      if (saved !== null) modules[k] = saved === 'true'
+      document.getElementById('toggle-' + k).className = 'toggle ' + (modules[k] ? 'on' : '')
+    })
+
+    function toggleModule(key) {
+      modules[key] = !modules[key]
+      localStorage.setItem('module_' + key, modules[key])
+      document.getElementById('toggle-' + key).className = 'toggle ' + (modules[key] ? 'on' : '')
+      api.setModules(modules)
+    }
+
+    // ── Demo counter ──────────────────────────────────────────────────────────────
+
+    function renderDemos(players) {
+      const list = document.getElementById('demo-list')
+
+      if (!players || !players.length) {
+        list.innerHTML = ''
+        return
+      }
+
+      list.innerHTML = players
+        .sort((a, b) => b.count - a.count)
+        .map(p => `
+      <div class="demo-row">
+        <div class="demo-team-dot ${p.team === 0 ? 'blue' : 'orange'}"></div>
+        <div class="demo-name">${esc(p.name)}</div>
+        <div class="demo-count">${p.count}</div>
+      </div>
+    `).join('')
+    }
+
+    function syncDemos() {
+      const merged = playersCache.map(p => ({
+        ...p,
+        count: demoData[p.primaryId]?.count ?? 0
+      }))
+
+      renderDemos(merged)
+    }
+
+    // ── Live data ──────────────────────────────────────────────────────────────────
+
+    api.on('status', ({ ok, msg }) => {
+      document.getElementById('dot').className = ok ? 'ok' : ''
+      document.getElementById('status-text').textContent = msg
+    })
+
+    api.on('format', label => {
+      const el = document.getElementById('format-label')
+      el.textContent = label
+      el.style.display = label ? '' : 'none'
+    })
+
+    api.on('players', players => {
+      playersCache = players
+      syncDemos()
+      const empty = document.getElementById('live-empty')
+      const demoSection = document.getElementById('live-demo-section')
+
+      if (!players || players.length === 0) {
+        empty.style.display = 'flex'
+        demoSection.style.display = 'none'
+        demoData = {}
+        renderDemos()
+        return
+      }
+
+      empty.style.display = 'none'
+      demoSection.style.display = ''
+
+      players.forEach(p => {
+        if (!demoData[p.primaryId]) {
+          demoData[p.primaryId] = { name: p.name, team: p.team, primaryId: p.primaryId, count: 0 }
+        } else {
+          demoData[p.primaryId].name = p.name
+          demoData[p.primaryId].team = p.team
+        }
+      })
+      Object.keys(demoData).forEach(k => {
+        if (!players.find(p => p.primaryId === k)) delete demoData[k]
+      })
+
+      renderDemos()
+    })
+
+    api.on('score', ({ blue, orange, time, overtime }) => {
+      const section = document.getElementById('live-score-section')
+      section.style.display = ''
+      document.getElementById('live-empty').style.display = 'none'
+      document.getElementById('score-blue').textContent = blue
+      document.getElementById('score-orange').textContent = orange
+
+      const mins = Math.floor(time / 60)
+      const secs = Math.floor(time % 60).toString().padStart(2, '0')
+      document.getElementById('time-display').textContent = overtime ? 'OVERTIME' : `${mins}:${secs}`
+    })
+
+    api.on('winchance', chance => {
+      if (chance === null) return
+      document.getElementById('win-label-mine').textContent = chance + '%'
+      document.getElementById('win-label-their').textContent = (100 - chance) + '%'
+      const fill = document.getElementById('win-bar-fill')
+      fill.style.width = chance + '%'
+      fill.style.background = chance >= 60 ? 'var(--green)' : chance <= 40 ? 'var(--red)' : 'var(--amber)'
+    })
+
+    api.on('demos', data => {
+      demoData = data || {}
+      syncDemos()
+    })
+
+    function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;') }
+
+    api.setModules(modules)
+  </script>
+</body>
+
+</html>
