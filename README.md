@@ -157,8 +157,8 @@ La compatibilité avec Linux et macOS n'est actuellement pas garantie.
 - Historique et statistiques de session
 - Sessions séparées par mode de jeu
 - Support de tous les modes Rocket League
-- Récupération et statistiques du chat de partie (si possible)
-- Statistiques "Pote là !" / "Tope là !" (si possible)
+- Récupération et statistiques du chat de partie
+- Statistiques "Pote là !" / "Tope là !"
 - Nouvelles analyses avancées de match
 
 ---
