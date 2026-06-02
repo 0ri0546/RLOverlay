@@ -24,6 +24,7 @@ RLO récupère les données fournies par Rocket League via RLS et affiche direct
 - MMR moyen des équipes
 - Probabilité de victoire estimée
 - Informations détaillées sur la composition du match
+- Notifications lors de fin de match
 
 L'objectif du projet est de fournir davantage de contexte compétitif pendant une partie et de permettre une meilleure analyse des matchs.
 
@@ -151,14 +152,13 @@ La compatibilité avec Linux et macOS n'est actuellement pas garantie.
 
 ### Prévu
 
-- Notifications lors des passages de rang
 - Prise en compte optionnelle des buts dans le calcul du winrate
 - Prise en compte optionnelle du temps restant dans le calcul du winrate
 - Historique et statistiques de session
 - Sessions séparées par mode de jeu
 - Support de tous les modes Rocket League
-- Récupération et statistiques du chat de partie
-- Statistiques "Pote là !" / "Tope là !"
+- Récupération et statistiques du chat de partie (si possible)
+- Statistiques "Pote là !" / "Tope là !" (si possible)
 - Nouvelles analyses avancées de match
 
 ---

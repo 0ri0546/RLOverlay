@@ -404,6 +404,7 @@
 
 <body>
   <div id="app">
+
     <div id="header">
       <div id="dot"></div>
       <span id="status-text">Connexion...</span>
@@ -615,8 +616,6 @@
     })
 
     api.on('demos', data => {
-      console.log("DEMOS DATA:", data)
-      console.log("PLAYERS IDS:", lastPlayers.map(p => p.primaryId))
       if (!lastPlayers) return
 
       lastPlayers = lastPlayers.map(p => {

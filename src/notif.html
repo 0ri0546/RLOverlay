@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: transparent;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        #box {
+            background: #0f131c;
+            border: 1px solid #d99191;
+            box-shadow: 0 4px 24px rgba(255, 120, 120, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+
+        #box.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .rank-icon {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 6px rgba(255, 120, 120, 0.5));
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            flex: 1;
+        }
+
+        .label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #ff8f8f;
+        }
+
+        .main {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .main span {
+            font-family: 'JetBrains Mono', monospace;
+            color: #ff8f8f;
+            font-size: 18px;
+        }
+
+        .sub {
+            font-size: 11px;
+            color: rgba(200, 216, 232, 0.5);
+            font-weight: 500;
+        }
+
+        .mmr-current {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 22px;
+            font-weight: 700;
+            color: rgba(200, 216, 232, 0.7);
+            white-space: nowrap;
+            align-self: center;
+            flex-shrink: 0;
+        }
+
+        .progress-wrap {
+            margin-top: 6px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 99px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #ff6b6b, #ff8f8f);
+            box-shadow: 0 0 6px rgba(255, 120, 120, 0.5);
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box">
+        <img id="icon" class="rank-icon" src="" alt="">
+        <div class="info">
+            <div class="label">Prochain Rank</div>
+            <div class="main" id="main"></div>
+            <div class="sub" id="sub"></div>
+            <div class="progress-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+        <div class="mmr-current" id="mmr-current"></div>
+    </div>
+    <script>
+        function rankIcon(rankName) {
+            if (!rankName) return ''
+            const map = { 'I': '1', 'II': '2', 'III': '3' }
+            const parts = rankName.split(' ')
+            const division = map[parts[parts.length - 1]] || ''
+            const base = parts.slice(0, -1).join('').toLowerCase().replace(/ /g, '')
+            return `assets/ranks/${base}${division}.png`
+        }
+
+        let hideTimeout = null
+
+        window.api.on('notify-data', data => {
+            const box = document.getElementById('box')
+            document.getElementById('icon').src = rankIcon(data.rank)
+
+            if (data.toNext !== null && data.toNext !== undefined) {
+                document.getElementById('main').innerHTML = `<span>${data.toNext} MMR</span> restants`
+                document.getElementById('sub').textContent = `vers ${data.rank || 'Rang Suivant'}`
+                document.getElementById('mmr-current').textContent = `MMR actuel : ${data.mmr}`
+                
+                const pct = data.progress ?? 0
+                setTimeout(() => {
+                    document.getElementById('progress-bar').style.width = `${pct}%`
+                }, 100)
+            } else {
+                document.getElementById('main').innerHTML = `<span>${data.mmr} MMR</span>`
+                document.getElementById('sub').textContent = data.rank || 'Supersonic Legend'
+                document.getElementById('mmr-current').textContent = ''
+                document.getElementById('progress-bar').style.width = '100%'
+            }
+
+            if (hideTimeout) clearTimeout(hideTimeout)
+            box.classList.remove('show')
+            setTimeout(() => {
+                box.classList.add('show')
+                hideTimeout = setTimeout(() => box.classList.remove('show'), 10000)
+            }, 50)
+        })
+    </script>
+</body>
+
+</html>
