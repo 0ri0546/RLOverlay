@@ -30,6 +30,10 @@
       {
         "from": "src/xinput.ps1",
         "to": "xinput.ps1"
+      },
+      {
+        "from": ".env",
+        "to": ".env"
       }
     ]
   },

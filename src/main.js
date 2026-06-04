@@ -1,8 +1,14 @@
-require('dotenv').config()
-const RLS_KEY = process.env.RLS_KEY || ''
-
 const { app, BrowserWindow, ipcMain, screen } = require('electron')
 const path = require('path')
+
+require('dotenv').config({
+  path: app.isPackaged
+    ? path.join(process.resourcesPath, '.env')
+    : path.join(__dirname, '..', '.env')
+})
+
+const RLS_KEY = process.env.RLS_KEY || ''
+console.log('RLS_KEY:', RLS_KEY ? 'OK' : 'MISSING')
 const net = require('net')
 const axios = require('axios')
 
@@ -218,6 +224,7 @@ const TRN_BASE = 'https://api.tracker.gg/api/v2/rocket-league/standard/profile'
 
 // Source 1 : RLS backend privé (BoostBoard)
 async function fetchFromRLS(platform, cleanId, playlistId) {
+  console.log('[RLS REQUEST]', platform, cleanId)
   const res = await axios.get(`${RLS_BASE}/player/${platform}/${cleanId}`, {
     headers: { 'X-API-Key': RLS_KEY, 'Accept': 'application/json', 'User-Agent': 'RL-Overlay/1.0' },
     timeout: 5000
@@ -247,7 +254,7 @@ async function fetchFromTRN(platform, name, playlistId) {
   }
 }
 
-// Source 3 : Scraping tracker.gg (pas de clé, page HTML)
+//Source 3 : Scraping tracker.gg (pas de clé, page HTML)
 async function fetchFromTrackerGG(platform, name, playlistId) {
   const url = `https://rocketleague.tracker.network/rocket-league/profile/${platform}/${encodeURIComponent(name)}/overview`
   const res = await axios.get(url, {
@@ -476,7 +483,6 @@ async function handleEvent(env) {
     return
   }
 
-  // Marquer la partie comme en cours dès 2+ joueurs
   if (raw.length > 1) matchInProgress = true
 
   const teams = data.Game?.Teams || []
