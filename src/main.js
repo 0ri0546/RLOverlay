@@ -642,48 +642,6 @@ function startKeyboardHook() {
   uIOhook.start()
 }
 
-const { spawn } = require('child_process')
-
-let gpProcess = null
-let lastR3 = false
-
-function startGamepadPolling() {
-  const ps1 = app.isPackaged
-    ? path.join(process.resourcesPath, 'xinput.ps1')
-    : path.join(__dirname, 'xinput.ps1')
-  gpProcess = spawn('powershell', [
-    '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', ps1
-  ])
-
-  let gpBuf = ''
-  gpProcess.stdout.on('data', chunk => {
-    gpBuf += chunk.toString()
-    const lines = gpBuf.split('\n')
-    gpBuf = lines.pop()
-    for (const line of lines) {
-      const [result, buttons] = line.trim().split(',').map(Number)
-      if (isNaN(result) || isNaN(buttons)) continue
-      if (result !== 0) continue
-
-      const r3 = !!(buttons & 0x0080)
-      const lb = !!(buttons & 0x0100)
-      if (r3 && lb && !lastR3) {
-        currentFormatIdx = (currentFormatIdx + 1) % FORMATS.length
-        const fmt = FORMATS[currentFormatIdx]
-        forcedFormat = fmt === 'auto' ? null : fmt
-        ipcMain.emit('set-format', null, fmt)
-        send('format', fmt)
-      }
-      lastR3 = r3 && lb
-    }
-  })
-
-  gpProcess.stderr.on('data', d => console.log('[GP] stderr:', d.toString()))
-
-  gpProcess.on('error', e => console.log('[GP] erreur:', e.message))
-  gpProcess.on('close', () => console.log('[GP] processus terminé'))
-}
-
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 function cleanup() {
@@ -697,11 +655,6 @@ function cleanup() {
     reconnectTimer = null
   }
 
-  if (gpProcess) {
-    try { gpProcess.kill() } catch { }
-    gpProcess = null
-  }
-
   try { uIOhook.stop() } catch { }
 }
 
@@ -711,7 +664,6 @@ app.whenReady().then(() => {
   createDashboard()
   connectToRL()
   startKeyboardHook()
-  startGamepadPolling()
 })
 
 app.on('window-all-closed', () => {
